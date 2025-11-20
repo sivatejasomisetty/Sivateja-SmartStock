@@ -8,7 +8,6 @@ export default function MainLayout({ children }) {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Products", path: "/products" },
     { name: "Predictions", path: "/predictions"},
-    { name:"Login", path: "/login"},
   ];
 
   return (
