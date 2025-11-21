@@ -1,7 +1,6 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 
 export default function MainLayout({ children }) {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const menuItems = [
@@ -41,10 +40,11 @@ export default function MainLayout({ children }) {
           <h2 className="text-xl font-semibold text-gray-700">
             Welcome, User 👋
           </h2>
-
-          <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600" onClick={() => navigate('/login')}>
+          <Link to="/">
+          <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
             Logout
           </button>
+          </Link>
         </header>
 
         {/* PAGE CONTENT */}
