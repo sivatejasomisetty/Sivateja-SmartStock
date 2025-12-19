@@ -41,7 +41,7 @@ export default function Dashboard() {
     };
   });
 
-  if (loading) return <div className="p-6">Loading SmartStock Dashboard...</div>;
+  if (loading) return <div className="p-6 text-white">Loading SmartStock Dashboard...</div>;
 
   return (
     <div className={`p-6 min-h-screen ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100"}`}>

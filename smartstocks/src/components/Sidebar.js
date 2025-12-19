@@ -70,7 +70,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </Link>
 
           <Link
-  className={`block px-4 py-2 rounded-lg font-medium transition-colors
+  className={`block px-4 py-2 text-white rounded-lg font-medium transition-colors
   ${pathname.startsWith("/stores") ? "bg-blue-600 text-white" : ""}`}
   to="/stores/Chennai"
 >

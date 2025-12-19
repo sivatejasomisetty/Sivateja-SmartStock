@@ -9,7 +9,7 @@ function Login({ onLogin }) {
     e.preventDefault();
 
     // REAL LOGIN CHECK
-    if (email === "admin@gmail.com" && password === "admin") {
+    if (email === "somisettysivateja@gmail.com" && password === "1385") {
       onLogin();
     } else {
       setErr("Invalid username or password");
