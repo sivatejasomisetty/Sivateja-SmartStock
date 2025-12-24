@@ -68,6 +68,7 @@ def generate_alerts():
         alerts.append({
             "store_id": store_id,
             "product_id": product_id,
+            "category" : row.category,
             "inventory_level": inventory,
             "predicted_weekly_sales": weekly_demand,
             "safety_stock": safety_stock,

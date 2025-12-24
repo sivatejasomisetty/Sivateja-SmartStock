@@ -27,7 +27,7 @@ app.add_middleware(
 @app.get("/api/products/all")
 def get_all_products():
     try:
-        df = pd.read_sql("SELECT * FROM inventory_data", engine)
+        df = pd.read_sql("SELECT * FROM inventory_data LIMIT 2000", engine)
         df = df.where(pd.notnull(df), None)
         return {"products": df.to_dict(orient="records")}
     except Exception as e:
@@ -60,23 +60,47 @@ def add_product(product: dict = Body(...)):
     return {"message": "Product added successfully"}
 
 
+
 @app.put("/api/products/{id}")
 def update_product(id: int, product: dict = Body(...)):
-    query = text("""
-        UPDATE inventory_data
-        SET category=:category,
-            inventory_level=:inventory_level,
-            price=:price
-        WHERE id=:id
-    """)
-    with engine.connect() as conn:
-        result = conn.execute(query, {**product, "id": id})
-        conn.commit()
+    try:
+        # Basic validation
+        if "category" not in product:
+            raise HTTPException(status_code=400, detail="Category is required")
 
-    if result.rowcount == 0:
-        raise HTTPException(status_code=404, detail="Product not found")
+        if "inventory_level" not in product or product["inventory_level"] < 0:
+            raise HTTPException(status_code=400, detail="Invalid inventory level")
 
-    return {"message": "Product updated successfully"}
+        if "price" not in product or product["price"] <= 0:
+            raise HTTPException(status_code=400, detail="Invalid price")
+
+        query = text("""
+            UPDATE inventory_data
+            SET category = :category,
+                inventory_level = :inventory_level,
+                price = :price
+            WHERE id = :id
+        """)
+
+        with engine.connect() as conn:
+            result = conn.execute(query, {
+                "category": product["category"],
+                "inventory_level": product["inventory_level"],
+                "price": product["price"],
+                "id": id
+            })
+            conn.commit()
+
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Product not found")
+
+        return {"message": "Product updated successfully"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print("🔥 UPDATE ERROR:", e)
+        raise HTTPException(status_code=500, detail="Failed to update product")
 
 
 @app.delete("/api/products/{id}")

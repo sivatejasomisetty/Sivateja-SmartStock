@@ -333,7 +333,7 @@ export default function Products() {
       {/* FILTERS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <input
-          className="p-3 rounded border text-gray-800"
+          className="p-3 rounded border text-gray-800 font-semibold"
           placeholder="Search by Product ID"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -394,7 +394,16 @@ export default function Products() {
       return (
         <tr
           key={p.id}
-          className="h-14 border-b border-gray-600 hover:bg-gray-700"
+              className="
+  h-14
+  border-b
+  border-gray-300
+  hover:bg-gray-200
+  dark:border-gray-600
+  dark:hover:bg-gray-700
+  transition-colors
+"
+
         >
           <td className="px-4 py-3 align-middle">{p.product_id}</td>
           <td className="px-4 py-3 align-middle">{p.category}</td>
@@ -431,7 +440,7 @@ export default function Products() {
         <button
           disabled={page === 1}
           onClick={() => setPage((p) => p - 1)}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
         >
           Prev
         </button>
@@ -443,7 +452,7 @@ export default function Products() {
         <button
           disabled={page === totalPages}
           onClick={() => setPage((p) => p + 1)}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
         >
           Next
         </button>

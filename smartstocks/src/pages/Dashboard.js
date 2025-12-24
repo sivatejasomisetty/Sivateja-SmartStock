@@ -29,8 +29,8 @@ export default function Dashboard() {
 
   // Logic for Stat Cards
   const totalProducts = products.length;
-  const lowStock = products.filter(p => (p.inventory_level || p.quantity) <= (p.reorderLevel ?? 10)).length;
-  const overstock = products.filter(p => (p.inventory_level || p.quantity) >= 100).length;
+  const lowStock = products.filter(p => (p.inventory_level || p.quantity) <= (p.reorderLevel ?? 70)).length;
+  const overstock = products.filter(p => (p.inventory_level || p.quantity) >= 400).length;
 
   // Chart Data Preparation
   const categoryStock = CATEGORIES.map(cat => {
@@ -47,12 +47,12 @@ export default function Dashboard() {
     <div className={`p-6 min-h-screen ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100"}`}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Inventory Dashboard</h1>
-        <button 
+        {/* <button 
           onClick={fetchDashboardData}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
           Refresh Data
-        </button>
+        </button> */}
       </div>
 
       {/* Stat Cards */}
