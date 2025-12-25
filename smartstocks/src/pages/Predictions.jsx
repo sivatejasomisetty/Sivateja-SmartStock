@@ -215,7 +215,9 @@
 // }
 
 
-
+//-------------------------------------------------------------------
+// OLD LOGIC
+//-------------------------------------------------------------------
 
 
 
@@ -312,6 +314,7 @@ import {
 
 const ALERTS_API = "http://127.0.0.1:8000/alerts";
 
+
 // Weekly distribution (sum = 1)
 const WEEK_SPLIT = [
   { day: "Mon", weight: 0.12 },
@@ -342,52 +345,54 @@ export default function Predictions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const getPrediction = async () => {
-    if (!storeId.trim() || !productId.trim()) {
-      setError("Please enter Store ID and Product ID");
+const getPrediction = async () => {
+  if (!storeId.trim() || !productId.trim()) {
+    setError("Please enter Store ID and Product ID");
+    return;
+  }
+
+  setLoading(true);
+  setError("");
+  setChartData([]);
+
+  try {
+    const res = await axios.get(ALERTS_API);
+
+    const record = res.data.find(
+      (item) =>
+        item.store_id.trim().toUpperCase() === storeId.trim().toUpperCase() &&
+        item.product_id.trim().toUpperCase() === productId.trim().toUpperCase()
+    );
+
+    if (!record) {
+      setError("No prediction data found for this product");
       return;
     }
 
-    setLoading(true);
-    setError("");
-    setChartData([]);
+    // ✅ SAFETY: avoid negative predictions
+    const weekly = Math.max(0, Math.round(record.predicted_weekly_sales));
+    const daily = Math.round(weekly / 7);
 
-    try {
-      const res = await axios.get(ALERTS_API);
+    setInventoryLevel(record.inventory_level);
+    setPredictedWeekly(weekly);
+    setPredictedDaily(daily);
+    setSuggestion(record.suggestion);
+    setStatus(record.status);
 
-      const record = res.data.find(
-        (item) =>
-          item.store_id === storeId.trim() &&
-          item.product_id.toLowerCase() === productId.trim().toLowerCase()
-      );
+    const graphData = WEEK_SPLIT.map((d) => ({
+      day: d.day,
+      demand: Math.round(weekly * d.weight),
+    }));
 
-      if (!record) {
-        setError("No prediction data found for this product");
-        return;
-      }
+    setChartData(graphData);
+  } catch (err) {
+    console.error(err);
+    setError("Failed to load prediction data");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      const weekly = record.predicted_weekly_sales;
-      const daily = Math.round(weekly / 7);
-
-      setInventoryLevel(record.inventory_level);
-      setPredictedWeekly(weekly);
-      setPredictedDaily(daily);
-      setSuggestion(record.suggestion);
-      setStatus(record.status);
-
-      const graphData = WEEK_SPLIT.map((d) => ({
-        day: d.day,
-        demand: Math.round(weekly * d.weight),
-      }));
-
-      setChartData(graphData);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load prediction data");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div
@@ -410,7 +415,7 @@ export default function Predictions() {
                 value={storeId}
                 onChange={(e) => setStoreId(e.target.value)}
                 className="w-full p-3 rounded border dark:bg-gray-700"
-                placeholder="Ex: S002"
+                placeholder="Ex: CHE-S01"
               />
             </div>
 

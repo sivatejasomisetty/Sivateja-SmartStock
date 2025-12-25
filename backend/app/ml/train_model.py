@@ -71,7 +71,10 @@ df['rolling_std_7'] = df.groupby(['store_id', 'product_id'])['units_sold'].trans
 )
 
 # Remove rows created by lag/rolling
-df.dropna(inplace=True)
+print("Rows before dropna:", len(df))
+# df.dropna(inplace=True)
+print("Rows before dropna:", len(df))
+
 
 # -------------------------------------------------
 # LABEL ENCODING
@@ -132,8 +135,8 @@ model.fit(X_train, y_train)
 # -------------------------------------------------
 # SAVE MODEL & ENCODERS
 # -------------------------------------------------
-joblib.dump(model, "model.pkl")
-joblib.dump(encoders, "encoders.pkl")
+joblib.dump(model, "app/ml/model.pkl")
+joblib.dump(encoders, "app/ml/encoders.pkl")
 
 print("✅ Model training completed successfully")
 print("💾 model.pkl and encoders.pkl saved")

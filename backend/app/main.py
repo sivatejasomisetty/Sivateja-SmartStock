@@ -121,6 +121,7 @@ def delete_product(id: int):
 
 @app.get("/predict")
 def predict(store_id: str, product_id: str):
+    print("PREDICT REQUEST RECEIVED:", store_id, product_id)
     return predict_units(store_id, product_id)
 
 
@@ -133,3 +134,75 @@ def alerts():
 @app.post("/chat")
 def chat(message: str = Body(..., embed=True)):
     return {"reply": chatbot_response(message)}
+
+
+
+#------------------- City-Dashboard----------------
+
+from fastapi import FastAPI
+from sqlalchemy import text
+from app.database import engine
+
+@app.get("/city-dashboard")
+def city_dashboard():
+    query = """
+        SELECT 
+  city,
+  COUNT(DISTINCT store_id) AS totalStores,
+  SUM(units_sold) AS totalUnitsSold,
+  SUM(inventory_level) AS totalInventory
+FROM inventory_data
+WHERE date >= (
+  SELECT MAX(date) FROM inventory_data
+) - INTERVAL 30 DAY
+GROUP BY city;
+
+
+    """
+
+    with engine.connect() as conn:
+        result = conn.execute(text(query))
+        rows = result.fetchall()
+
+    data = []
+    for row in rows:
+        data.append({
+            "city": row.city,
+            "totalStores": int(row.totalStores or 0),
+            "totalUnitsSold": int(row.totalUnitsSold or 0),
+            "totalInventory": int(row.totalInventory or 0)
+        })
+
+    return data
+
+
+#-------------------- Store-Dashboard--------------
+@app.get("/stores-by-city")
+def stores_by_city(city: str):
+    query = """
+        SELECT 
+  store_id,
+  SUM(units_sold) AS totalUnitsSold,
+  SUM(inventory_level) AS totalInventory
+FROM inventory_data
+WHERE city = %s
+AND date >= (
+  SELECT MAX(date) FROM inventory_data
+) - INTERVAL 30 DAY
+GROUP BY store_id;
+
+
+    """
+
+    df = pd.read_sql(query, engine, params=(city,))
+
+    return [
+        {
+            "StoreID": row["store_id"],
+            "storeName": f"{city.title()} Store {row['store_id']}",
+            "totalUnitsSold": int(row["totalUnitsSold"]),
+            "totalInventory": int(row["totalInventory"])
+        }
+        for _, row in df.iterrows()
+    ]
+

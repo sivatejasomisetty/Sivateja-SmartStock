@@ -149,6 +149,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   BarChart,
   Bar,
@@ -163,48 +164,20 @@ export default function CityDashboard() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  /* ================= DUMMY DATA ================= */
+  /* ================= REAL DATA ================= */
   useEffect(() => {
-    const dummyCities = [
-      {
-        city: "Hyderabad",
-        totalStores: 12,
-        totalUnitsSold: 420,
-        totalInventory: 380,
-      },
-      {
-        city: "Bangalore",
-        totalStores: 18,
-        totalUnitsSold: 610,
-        totalInventory: 820,
-      },
-      {
-        city: "Chennai",
-        totalStores: 10,
-        totalUnitsSold: 300,
-        totalInventory: 190,
-      },
-      {
-        city: "Mumbai",
-        totalStores: 25,
-        totalUnitsSold: 980,
-        totalInventory: 720,
-      },
-      {
-        city: "Delhi",
-        totalStores: 20,
-        totalUnitsSold: 860,
-        totalInventory: 1250,
-      },
-      {
-        city: "Pune",
-        totalStores: 8,
-        totalUnitsSold: 210,
-        totalInventory: 260,
-      },
-    ];
+    const fetchCities = async () => {
+      try {
+        const res = await axios.get(
+          "http://127.0.0.1:8000/city-dashboard"
+        );
+        setCities(res.data);
+      } catch (err) {
+        console.error("Failed to load city dashboard", err);
+      }
+    };
 
-    setCities(dummyCities);
+    fetchCities();
   }, []);
 
   /* ================= SEARCH ================= */
@@ -243,14 +216,17 @@ export default function CityDashboard() {
 
       {/* ================= BAR CHART ================= */}
       <div className="bg-white p-6 rounded-xl shadow">
-        <h2 className="text-xl font-bold mb-4">City vs Units Sold</h2>
+        <h2 className="text-xl font-bold mb-4">City vs Units Sold (Last 30 Days)</h2>
 
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={cities}>
             <XAxis dataKey="city" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="totalUnitsSold" />
+            <Bar
+                dataKey={(d) => Math.round(d.totalUnitsSold / 1000)}
+                name="Units Sold (in thousands)"
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
