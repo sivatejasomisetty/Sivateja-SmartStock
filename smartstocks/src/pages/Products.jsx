@@ -227,14 +227,27 @@ export default function Products() {
   ];
 
   /* ================= FETCH PRODUCTS ================= */
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/all`);
-      setProducts(res.data.products || []);
-    } catch (err) {
-      console.error("Failed to fetch products:", err);
-    }
-  };
+ const fetchProducts = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      "http://localhost:8000/api/products/all",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // 🔥 THIS LINE WAS MISSING
+    setProducts(res.data.products || []);
+
+  } catch (err) {
+    console.error("Failed to fetch products:", err);
+    setProducts([]);
+  }
+};
 
   useEffect(() => {
     fetchProducts();
@@ -440,7 +453,7 @@ export default function Products() {
         <button
           disabled={page === 1}
           onClick={() => setPage((p) => p - 1)}
-          className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50 text-white font-bold"
         >
           Prev
         </button>
@@ -452,7 +465,7 @@ export default function Products() {
         <button
           disabled={page === totalPages}
           onClick={() => setPage((p) => p + 1)}
-          className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50 text-white font-bold"
         >
           Next
         </button>
