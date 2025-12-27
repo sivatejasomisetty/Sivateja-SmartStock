@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # firebase
-firebase_admin_key.json
+backend/firebase_admin_key.json
 

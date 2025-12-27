@@ -56,3 +56,6 @@ coverage/
 # Python virtual environments
 venv/
 backend/venv/
+
+# Firebase admin credentials (DO NOT COMMIT)
+backend/firebase_admin_key.json
