@@ -48,43 +48,19 @@
 
 
 //--------------------- Working but not login------------------------------
-// import { Navigate } from "react-router-dom";
-// import { useAuth } from "../context/AuthContext";
-
-// export default function ProtectedRoute({ children, allowedRoles }) {
-//   const { user, loading } = useAuth();
-
-//   if (loading) return <div className="p-6">Loading...</div>;
-
-//   if (!user) return <Navigate to="/login" />;
-
-//   if (allowedRoles && !allowedRoles.includes(user.role)) {
-//     return <Navigate to="/dashboard" />;
-//   }
-
-//   return children;
-// }
-
-
-
-
-
-
-
-
-//----------------------- Copilot--------------------------
-import React from "react";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-function ProtectedRoute({ allowedRoles, children }) {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+export default function ProtectedRoute({ children, allowedRoles }) {
+  const { user, loading } = useAuth();
 
-  if (!token || !allowedRoles.includes(role)) {
-    return <Navigate to="/login" replace />;
+  if (loading) return <div className="p-6">Loading...</div>;
+
+  if (!user) return <Navigate to="/login" />;
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" />;
   }
 
   return children;
 }
-
-export default ProtectedRoute;

@@ -95,36 +95,172 @@
 
 
 
+//------------------- Working---------------------------------
+// import React, { useEffect, useState, useContext } from "react";
+// import axios from "axios";
+// import { ThemeContext } from "../context/ThemeContext";
 
-import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+// const API_URL = "http://127.0.0.1:8000/alerts";
+
+// export default function Alerts() {
+//   const { theme } = useContext(ThemeContext);
+
+//   const [alerts, setAlerts] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+
+//   const fetchAlerts = async () => {
+//     try {
+//       setLoading(true);
+//       const res = await axios.get(API_URL);
+//       setAlerts(res.data || []);
+//     } catch (err) {
+//       console.error("Alerts fetch error:", err);
+//       setError("Failed to load alerts from server");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchAlerts();
+//   }, []);
+
+//   return (
+//     <div
+//       className={`p-6 min-h-screen ${
+//         theme === "dark"
+//           ? "bg-gray-900 text-white"
+//           : "bg-gray-100 text-gray-900"
+//       }`}
+//     >
+//       <h1 className="text-3xl font-bold mb-6">Inventory Alerts</h1>
+
+//       {/* LOADING */}
+//       {loading && <p>Loading alerts...</p>}
+
+//       {/* ERROR */}
+//       {error && <p className="text-red-500">{error}</p>}
+
+//       {/* EMPTY STATE */}
+//       {!loading && alerts.length === 0 && (
+//         <p className="text-gray-500">No alerts at the moment 🎉</p>
+//       )}
+
+//       {/* ALERTS TABLE */}
+//       {!loading && alerts.length > 0 && (
+//         <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-xl shadow">
+//           <table className="min-w-full">
+//             <thead className="bg-gray-200 dark:bg-gray-700">
+//               <tr>
+//                 <th className="px-4 py-3 text-left">Product ID</th>
+//                 <th className="px-4 py-3 text-left">Category</th>
+//                 <th className="px-4 py-3 text-left">Stock Qty</th>
+//                 <th className="px-4 py-3 text-left">Status</th>
+//                 <th className="px-4 py-3 text-left">Suggestion</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {alerts.map((alert, index) => (
+//                 <tr
+//                   key={index}
+//                   className="border-t dark:border-gray-700"
+//                 >
+//                   <td className="px-4 py-3">{alert.product_id}</td>
+//                   <td className="px-4 py-3">{alert.category}</td>
+//                   <td className="px-4 py-3">{alert.inventory_level}</td>
+//                   <td className="px-4 py-3">
+//                     <span
+//                       className={`px-3 py-1 rounded-full text-sm font-medium ${
+//                         alert.status === "Low Stock"
+//                           ? "bg-red-100 text-red-600"
+//                           : alert.status === "Overstock"
+//                           ? " text-yellow-600"                 /*bg-yellow-100*/
+//                           : " text-green-600"                  /*bg-green-100*/
+//                       }`}
+//                     >
+//                       {alert.status}
+//                     </span>
+//                   </td>
+//                   <td className="px-4 py-3">
+//                     {alert.suggestion}
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useEffect, useState, useContext, useMemo } from "react";
+import api from "../api/axios";
 import { ThemeContext } from "../context/ThemeContext";
-
-const API_URL = "http://127.0.0.1:8000/alerts";
+import { useAuth } from "../context/AuthContext";
 
 export default function Alerts() {
   const { theme } = useContext(ThemeContext);
+  const { user } = useAuth();
 
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
+  /* ================= FETCH ALERTS ================= */
+  useEffect(() => {
+    fetchAlerts();
+  }, []);
 
   const fetchAlerts = async () => {
     try {
-      setLoading(true);
-      const res = await axios.get(API_URL);
+      const res = await api.get("/alerts");
       setAlerts(res.data || []);
     } catch (err) {
-      console.error("Alerts fetch error:", err);
-      setError("Failed to load alerts from server");
+      console.error("Failed to load alerts", err);
+      setAlerts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchAlerts();
-  }, []);
+  /* ================= ROLE FILTER ================= */
+  const roleFilteredAlerts = useMemo(() => {
+    if (!user) return [];
+
+    // 🔐 Manager → only own store alerts
+    if (user.role === "manager") {
+      return alerts.filter(
+        (a) =>
+          String(a.store_id).trim().toUpperCase() ===
+          String(user.store_id).trim().toUpperCase()
+      );
+    }
+
+    // 👑 Admin → all alerts
+    return alerts;
+  }, [alerts, user]);
+
+  if (loading) {
+    return <div className="p-6">Loading alerts...</div>;
+  }
 
   return (
     <div
@@ -136,61 +272,53 @@ export default function Alerts() {
     >
       <h1 className="text-3xl font-bold mb-6">Inventory Alerts</h1>
 
-      {/* LOADING */}
-      {loading && <p>Loading alerts...</p>}
+      {roleFilteredAlerts.length === 0 ? (
+        <p className="text-gray-500">
+          No alerts available for your store.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {roleFilteredAlerts.map((alert, idx) => (
+            <div
+              key={idx}
+              className={`p-5 rounded-xl shadow border-l-4 ${
+                alert.status.includes("CRITICAL")
+                  ? "border-red-600 bg-red-50 dark:bg-red-900/30"
+                  : alert.status.includes("UNDERSTOCK")
+                  ? "border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30"
+                  : "border-green-500 bg-green-50 dark:bg-green-900/30"
+              }`}
+            >
+              <h2 className="text-lg font-semibold mb-1">
+                Store: {alert.store_id}
+              </h2>
 
-      {/* ERROR */}
-      {error && <p className="text-red-500">{error}</p>}
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Product: <strong>{alert.product_id}</strong>
+              </p>
 
-      {/* EMPTY STATE */}
-      {!loading && alerts.length === 0 && (
-        <p className="text-gray-500">No alerts at the moment 🎉</p>
-      )}
+              <p className="mt-2">
+                <strong>Status:</strong> {alert.status}
+              </p>
 
-      {/* ALERTS TABLE */}
-      {!loading && alerts.length > 0 && (
-        <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-xl shadow">
-          <table className="min-w-full">
-            <thead className="bg-gray-200 dark:bg-gray-700">
-              <tr>
-                <th className="px-4 py-3 text-left">Product ID</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">Stock Qty</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Suggestion</th>
-              </tr>
-            </thead>
-            <tbody>
-              {alerts.map((alert, index) => (
-                <tr
-                  key={index}
-                  className="border-t dark:border-gray-700"
-                >
-                  <td className="px-4 py-3">{alert.product_id}</td>
-                  <td className="px-4 py-3">{alert.category}</td>
-                  <td className="px-4 py-3">{alert.inventory_level}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        alert.status === "Low Stock"
-                          ? "bg-red-100 text-red-600"
-                          : alert.status === "Overstock"
-                          ? " text-yellow-600"                 /*bg-yellow-100*/
-                          : " text-green-600"                  /*bg-green-100*/
-                      }`}
-                    >
-                      {alert.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    {alert.suggestion}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              <p>
+                <strong>Inventory:</strong> {alert.inventory_level}
+              </p>
+
+              <p>
+                <strong>Predicted Weekly Sales:</strong>{" "}
+                {alert.predicted_weekly_sales}
+              </p>
+
+              <p className="mt-2 text-sm italic">
+                {alert.suggestion}
+              </p>
+            </div>
+          ))}
         </div>
       )}
     </div>
   );
 }
+
+

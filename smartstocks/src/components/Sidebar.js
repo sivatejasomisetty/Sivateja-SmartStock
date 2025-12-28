@@ -1,26 +1,41 @@
 // import React from "react";
-// import { Link, useLocation } from "react-router-dom";
+// import { Link, useLocation, useNavigate } from "react-router-dom";
 // import { X } from "lucide-react";
+// import { useAuth } from "../context/AuthContext";
 
 // const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 //   const { pathname } = useLocation();
+//   const navigate = useNavigate();
+//   const { user } = useAuth();
+
+//   const logout = () => {
+//     localStorage.removeItem("token");
+//     navigate("/login");
+//     window.location.reload();
+//   };
+
+//   const linkClass = (path) =>
+//     `block px-4 py-2 rounded-lg font-medium transition-colors
+//      text-gray-700 dark:text-gray-200 hover:bg-gray-200 hover:text-gray-900
+//      dark:hover:bg-gray-700 dark:hover:text-white
+//      ${pathname === path ? "bg-blue-600 text-white dark:bg-blue-500" : ""}`;
 
 //   return (
 //     <>
 //       {/* MOBILE BACKDROP */}
 //       <div
-//         className={`fixed inset-0 bg-black/40 z-20 lg:hidden transition-opacity 
+//         className={`fixed inset-0 bg-black/40 z-20 lg:hidden transition-opacity
 //         ${sidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
 //         onClick={() => setSidebarOpen(false)}
-//       ></div>
+//       />
 
 //       {/* SIDEBAR */}
 //       <aside
-//         className={`fixed top-0 left-0 h-full bg-white dark:bg-gray-800 shadow-md w-64 
+//         className={`fixed top-0 left-0 h-full bg-white dark:bg-gray-800 shadow-md w-64
 //         z-30 transform transition-transform duration-300
 //         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
 //       >
-//         {/* Mobile Close Button */}
+//         {/* MOBILE CLOSE */}
 //         <button
 //           className="lg:hidden absolute top-4 right-4"
 //           onClick={() => setSidebarOpen(false)}
@@ -29,54 +44,49 @@
 //         </button>
 
 //         <nav className="mt-16 p-4 space-y-4">
-//           <Link
-//             className={`block px-4 py-2 rounded-lg font-medium transition-colors text-gray-700 dark:text-gray-200 hover:bg-gray-200 
-//               hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white
-//               ${pathname === "/dashboard" ? "bg-blue-600 text-white dark:bg-blue-500 dark:text-white" : ""} `}
-//                to="/dashboard" >
+//           <Link className={linkClass("/dashboard")} to="/dashboard">
 //             Dashboard
 //           </Link>
 
-//           <Link
-//             className={`block px-4 py-2 rounded-lg font-medium transition-colors text-gray-700 dark:text-gray-200 hover:bg-gray-200 
-//               hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white
-//               ${pathname === "/products" ? "bg-blue-600 text-white dark:bg-blue-500 dark:text-white" : ""} `}
-//                to="/products" >
+//           <Link className={linkClass("/products")} to="/products">
 //             Products
 //           </Link>
 
-//           <Link
-//             className={`block px-4 py-2 rounded-lg font-medium transition-colors text-gray-700 dark:text-gray-200 hover:bg-gray-200 
-//               hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white
-//               ${pathname === "/predictions" ? "bg-blue-600 text-white dark:bg-blue-500 dark:text-white" : ""} `}
-//                to="/predictions" >
+//           <Link className={linkClass("/predictions")} to="/predictions">
 //             Predictions
 //           </Link>
 
-//           <Link
-//             className={`block px-4 py-2 rounded-lg font-medium transition-colors text-gray-700 dark:text-gray-200 hover:bg-gray-200 
-//               hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white
-//               ${pathname === "/alerts" ? "bg-blue-600 text-white dark:bg-blue-500 dark:text-white" : ""} `}
-//                to="/alerts" >
+//           <Link className={linkClass("/alerts")} to="/alerts">
 //             Alerts
 //           </Link>
 
-//           <Link
-//             className={`block px-4 py-2 rounded-lg font-medium transition-colors text-gray-700 dark:text-gray-200 hover:bg-gray-200 
-//               hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white
-//               ${pathname === "/cities" ? "bg-blue-600 text-white dark:bg-blue-500 dark:text-white" : ""} `}
-//                to="/cities" >
-//            City Dashboard
-//           </Link>
+//           {/* ADMIN ONLY */}
+//           {user?.role === "admin" && (
+//             <Link className={linkClass("/cities")} to="/cities">
+//               City Dashboard
+//             </Link>
+//           )}
 
-//           <Link
-//   className={`block px-4 py-2 text-white rounded-lg font-medium transition-colors
-//   ${pathname.startsWith("/stores") ? "bg-blue-600 text-white" : ""}`}
-//   to="/stores/Chennai"
-// >
-//   Store Dashboard
-// </Link>
+//           {/* STORE DASHBOARD (DYNAMIC) */}
+//           {user?.role === "manager" && user?.store_id && (
+//             <Link
+//               className={`block px-4 py-2 rounded-lg font-medium transition-colors
+//               ${pathname.startsWith("/stores") ? "bg-blue-600 text-white" : ""}
+//               text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700`}
+//               to={`/stores/${encodeURIComponent(user.store_id.split("-")[0])}`}
+//             >
+//               Store Dashboard
+//             </Link>
+//           )}
 
+//           {/* LOGOUT */}
+//           <button
+//             onClick={logout}
+//             className="mt-6 w-full text-left px-4 py-2 rounded-lg
+//             bg-red-600 text-white hover:bg-red-700"
+//           >
+//             Logout
+//           </button>
 //         </nav>
 //       </aside>
 //     </>
@@ -84,11 +94,6 @@
 // };
 
 // export default Sidebar;
-
-
-
-
-
 
 
 
@@ -105,12 +110,15 @@ import { useAuth } from "../context/AuthContext";
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-    window.location.reload();
+  if (!user) return null;
+
+  const isAdmin = user.role === "admin";
+
+  const handleLogout = () => {
+    logout();              // 🔥 correct way
+    navigate("/login");    // SPA-safe redirect
   };
 
   const linkClass = (path) =>
@@ -133,7 +141,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         className={`fixed top-0 left-0 h-full bg-white dark:bg-gray-800 shadow-md w-64
         z-30 transform transition-transform duration-300
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        
       >
+      
         {/* MOBILE CLOSE */}
         <button
           className="lg:hidden absolute top-4 right-4"
@@ -141,6 +151,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         >
           <X className="text-gray-600 dark:text-gray-200" size={26} />
         </button>
+        
 
         <nav className="mt-16 p-4 space-y-4">
           <Link className={linkClass("/dashboard")} to="/dashboard">
@@ -160,27 +171,27 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </Link>
 
           {/* ADMIN ONLY */}
-          {user?.role === "admin" && (
-            <Link className={linkClass("/cities")} to="/cities">
-              City Dashboard
-            </Link>
-          )}
+          {isAdmin && (
+            <>
+              <Link className={linkClass("/cities")} to="/cities">
+                City Dashboard
+              </Link>
 
-          {/* STORE DASHBOARD (DYNAMIC) */}
-          {user?.role === "manager" && user?.store_id && (
-            <Link
-              className={`block px-4 py-2 rounded-lg font-medium transition-colors
-              ${pathname.startsWith("/stores") ? "bg-blue-600 text-white" : ""}
-              text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700`}
-              to={`/stores/${encodeURIComponent(user.store_id.split("-")[0])}`}
-            >
-              Store Dashboard
-            </Link>
+              {/* Default city example — can be improved later */}
+              {/* <Link
+                className={`block px-4 py-2 rounded-lg font-medium transition-colors
+                ${pathname.startsWith("/stores") ? "bg-blue-600 text-white" : ""}
+                text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700`}
+                to="/stores/Chennai"
+              >
+                Store Dashboard
+              </Link> */}
+            </>
           )}
 
           {/* LOGOUT */}
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="mt-6 w-full text-left px-4 py-2 rounded-lg
             bg-red-600 text-white hover:bg-red-700"
           >

@@ -326,7 +326,7 @@ export default function Products() {
 
   return (
     <div
-      className={`p-6 min-h-screen ${
+      className={`p-6 min-h-screen${
         theme === "dark"
           ? "bg-gray-900 text-white"
           : "bg-gray-100 text-gray-900"
