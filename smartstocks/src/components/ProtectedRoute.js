@@ -47,19 +47,46 @@
 
 
 
-//--------------------- Working but not login------------------------------
+//--------------------- Working version------------------------------
+// import { Navigate } from "react-router-dom";
+// import { useAuth } from "../context/AuthContext";
+
+// export default function ProtectedRoute({ children, allowedRoles }) {
+//   const { user, loading } = useAuth();
+
+//   if (loading) return <div className="p-6">Loading...</div>;
+
+//   if (!user) return <Navigate to="/login" />;
+
+//   if (allowedRoles && !allowedRoles.includes(user.role)) {
+//     return <Navigate to="/dashboard" />;
+//   }
+
+//   return children;
+// }
+
+
+
+
+
+
+
+
+//Testing version for products page fix
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function ProtectedRoute({ children, allowedRoles }) {
+export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  // ✅ wait until auth check finishes
+  if (loading) {
+    return <div className="p-6">Checking authentication...</div>;
+  }
 
-  if (!user) return <Navigate to="/login" />;
-
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/dashboard" />;
+  // ✅ only one redirect rule
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
   return children;

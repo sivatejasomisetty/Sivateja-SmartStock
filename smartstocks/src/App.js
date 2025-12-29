@@ -65,6 +65,8 @@ import MainLayout from "./layouts/MainLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
+import AddProduct from "./pages/AddProduct";
+import EditProduct from "./pages/EditProduct";
 import Predictions from "./pages/Predictions";
 import Alerts from "./pages/Alerts";
 import CityDashboard from "./pages/CityDashboard";
@@ -88,6 +90,8 @@ export default function App() {
         >
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/add-product" element={<AddProduct />} />
+          <Route path="/edit-product/:id" element={<EditProduct />} />
           <Route path="/predictions" element={<Predictions />} />
           <Route path="/alerts" element={<Alerts />} />
 

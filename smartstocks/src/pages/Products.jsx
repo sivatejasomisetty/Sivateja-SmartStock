@@ -199,9 +199,12 @@
 
 import React, { useEffect, useState, useContext, useMemo } from "react";
 import axios from "axios";
+import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+import AddProduct from "./AddProduct";
+import EditProduct from "./EditProduct";
 
 const API_BASE = "http://localhost:8000/api/products";
 
@@ -314,15 +317,18 @@ export default function Products() {
   );
 
   /* ================= DELETE PRODUCT ================= */
-  const deleteProduct = async (id) => {
-    if (!window.confirm("Delete this product?")) return;
-    try {
-      await axios.delete(`${API_BASE}/${id}`);
-      fetchProducts();
-    } catch (err) {
-      alert("Failed to delete product");
-    }
-  };
+ 
+const deleteProduct = async (id) => {
+  if (!window.confirm("Delete this product?")) return;
+
+  try {
+    await api.delete(`/api/products/${id}`); // ✅ token included
+    fetchProducts();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to delete product");
+  }
+};
 
   return (
     <div

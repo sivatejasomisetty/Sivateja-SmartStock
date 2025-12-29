@@ -393,28 +393,38 @@ def delete_product(id: int, user=Depends(get_current_user)):
 
 
 #------------------ City-Dashboard(Role-Aware)---------------
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from app.dependencies import get_current_user
 from app.guards import admin_only
+import pandas as pd
 
 @app.get("/api/sales/cities/summary")
 def city_summary(user=Depends(get_current_user)):
 
-    # 🔐 ADMIN ONLY
     admin_only(user)
 
-    # ---- existing logic stays the same below ----
-    df = pd.read_sql("""
-        SELECT city,
-               COUNT(DISTINCT store_id) AS totalStores,
-               SUM(units_sold) AS totalUnitsSold,
-               SUM(inventory_level) AS totalInventory
-        FROM inventory_data
-        GROUP BY city
-    """, engine)
+    try:
+        df = pd.read_sql("""
+            SELECT 
+                city,
+                COUNT(DISTINCT store_id) AS totalStores,
+                COALESCE(SUM(units_sold), 0) AS totalUnitsSold,
+                COALESCE(SUM(inventory_level), 0) AS totalInventory
+            FROM inventory_data
+            WHERE city IS NOT NULL
+              AND date >= (
+                  SELECT MAX(date) FROM inventory_data
+              ) - INTERVAL 30 DAY
+            GROUP BY city
+        """, engine)
 
-    df = df.where(pd.notnull(df), None)
-    return df.to_dict(orient="records")
+        return df.to_dict(orient="records")
+
+    except Exception as e:
+        print("CITY SUMMARY ERROR:", e)
+        raise HTTPException(status_code=500, detail="City summary fetch failed")
+
+
 
 #-------------------- Store Dashboard(Role-Aware)------------------------
 from fastapi import Depends
