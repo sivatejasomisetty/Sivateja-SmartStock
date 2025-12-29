@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+pandas
+python-jose
+passlib[bcrypt]
+python-multipart
+mysqlclient
+google-generativeai
