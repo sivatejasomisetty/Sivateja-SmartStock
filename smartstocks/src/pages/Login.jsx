@@ -1,23 +1,23 @@
-//---------------------- Working----------------------------
 // import React, { useState } from "react";
 // import axios from "axios";
 // import { useNavigate } from "react-router-dom";
+// import { useAuth } from "../context/AuthContext";
 
 // function Login() {
 //   const [email, setEmail] = useState("");
 //   const [password, setPassword] = useState("");
 //   const [error, setError] = useState("");
 //   const [loading, setLoading] = useState(false);
+
 //   const navigate = useNavigate();
+//   const { loadUser } = useAuth(); 
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     setError("");
 //     setLoading(true);
-//     try {
-//       console.log("EMAIL:", email);
-// console.log("PASSWORD:", password);
 
+//     try {
 //       const res = await axios.post(
 //         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyC2a19yfh-1kBLijEAqfd0LmmMueMnTpzk",
 //         {
@@ -27,15 +27,20 @@
 //         }
 //       );
 
-//       // 🔐 store Firebase token
+//       // 🔐 Store token
+//       localStorage.clear();
 //       localStorage.setItem("token", res.data.idToken);
+//       localStorage.setItem("role", res.data.role);
+//     localStorage.setItem("store_id", res.data.store_id || "");
+
+
+//       await loadUser();
 
 //       navigate("/dashboard", { replace: true });
 //     } catch (err) {
-//   console.error("LOGIN ERROR FULL:", err.response?.data || err);
-//   setError(err.response?.data?.error?.message || "Login failed");
-// }
-// finally {
+//       console.error("LOGIN ERROR FULL:", err.response?.data || err);
+//       setError(err.response?.data?.error?.message || "Login failed");
+//     } finally {
 //       setLoading(false);
 //     }
 //   };
@@ -92,14 +97,11 @@
 
 
 
-
-
-
-
+//--------------- Testing------------------
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // 🔥 ADD THIS
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -108,7 +110,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { loadUser } = useAuth(); // 🔥 ADD THIS
+  const { loadUser } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,6 +118,7 @@ function Login() {
     setLoading(true);
 
     try {
+      // 1️⃣ Firebase authentication
       const res = await axios.post(
         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyC2a19yfh-1kBLijEAqfd0LmmMueMnTpzk",
         {
@@ -125,14 +128,16 @@ function Login() {
         }
       );
 
-      // 🔐 Store token
+      // 2️⃣ Store ONLY the token
       localStorage.clear();
       localStorage.setItem("token", res.data.idToken);
 
-      // 🔥 THIS WAS MISSING
+      // 3️⃣ Load role & store_id from YOUR backend
       await loadUser();
 
+      // 4️⃣ Navigate
       navigate("/dashboard", { replace: true });
+
     } catch (err) {
       console.error("LOGIN ERROR FULL:", err.response?.data || err);
       setError(err.response?.data?.error?.message || "Login failed");

@@ -326,7 +326,7 @@ export default function Dashboard() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
-        <KPI title="Total Products" value={totalProducts} color="text-white-500"/>
+        {/* <KPI title="Total Products" value={totalProducts} color="text-white-500"/> */}
         <KPI title="Low Stock Items" value={lowStock} color="text-red-500" />
         <KPI title="Overstock Items" value={overStock} color="text-yellow-500" />
         <KPI title="Total Inventory" value={totalInventory} color="text-blue-600" />
