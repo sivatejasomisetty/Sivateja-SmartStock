@@ -259,7 +259,7 @@ export default function Alerts() {
   }, [alerts, user]);
 
   if (loading) {
-    return <div className="p-6">Loading alerts...</div>;
+    return <div className="p-6 text-gray-900 dark:text-white ">Loading alerts...</div>;
   }
 
   return (

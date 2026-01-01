@@ -200,6 +200,7 @@ const deleteProduct = async (id) => {
   <thead>
     <tr className="bg-gray-700 text-white h-14">
       <th className="px-4 py-3 text-left align-middle">Product ID</th>
+      <th className="px-4 py-3 text-left align-middle">Product Name</th>
       <th className="px-4 py-3 text-left align-middle">Category</th>
       <th className="px-4 py-3 text-left align-middle">Stock Qty</th>
       <th className="px-4 py-3 text-left align-middle">Status</th>
@@ -226,6 +227,7 @@ const deleteProduct = async (id) => {
 
         >
           <td className="px-4 py-3 align-middle">{p.product_id}</td>
+          <td className="px-4 py-3 align-middle">{p.product_name}</td>
           <td className="px-4 py-3 align-middle">{p.category}</td>
           <td className="px-4 py-3 align-middle">{p.inventory_level}</td>
           <td className="px-4 py-3 align-middle">

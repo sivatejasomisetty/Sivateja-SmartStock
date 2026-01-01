@@ -10,3 +10,10 @@ passlib[bcrypt]
 python-multipart
 mysqlclient
 google-generativeai
+joblib
+xgboost
+numpy
+scikit-learn
+python-dotenv
+
+
