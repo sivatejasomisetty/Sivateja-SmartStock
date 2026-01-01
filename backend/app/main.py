@@ -318,3 +318,11 @@ def get_me(user=Depends(get_current_user)):
     }
 #------------------------------------------------------------------------------------------------------
 
+#------------------------ Deployment Testing-----------------
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "service": "SmartStock Backend",
+        "deployment": "successful"
+    }
