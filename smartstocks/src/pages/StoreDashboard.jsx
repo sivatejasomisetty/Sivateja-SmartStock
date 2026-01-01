@@ -294,7 +294,7 @@ export default function StoreDashboard() {
   /* ================= LOADING ================= */
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="p-6 text-gray-900 dark:text-white">
         Loading stores in {decodedCity}...
       </div>
     );
@@ -304,7 +304,7 @@ export default function StoreDashboard() {
   if (stores.length === 0) {
     return (
       <div className="p-6">
-        <h2 className="text-xl font-bold">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
           No store data available for {decodedCity}
         </h2>
       </div>
@@ -314,7 +314,7 @@ export default function StoreDashboard() {
   /* ================= UI ================= */
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-5">
+      <h1 className="text-2xl font-bold mb-5 text-gray-900 dark:text-white" >
         {decodedCity} Stores
       </h1>
 

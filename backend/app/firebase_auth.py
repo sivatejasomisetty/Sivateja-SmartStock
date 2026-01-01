@@ -1,11 +1,12 @@
 import firebase_admin
 from firebase_admin import credentials, auth
 import os
+import json
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 cred = credentials.Certificate(
-    os.path.join(BASE_DIR, "firebase_admin_key.json")
+     json.loads(os.getenv("FIREBASE_CREDENTIALS"))
 )
 
 firebase_admin.initialize_app(cred)
