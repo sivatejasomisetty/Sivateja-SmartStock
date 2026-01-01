@@ -15,5 +15,6 @@ xgboost
 numpy
 scikit-learn
 python-dotenv
+firebase-admin
 
 
