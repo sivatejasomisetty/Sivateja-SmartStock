@@ -152,7 +152,7 @@ function Login() {
         onSubmit={handleSubmit}
         className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl w-full max-w-sm"
       >
-        <h2 className="text-3xl mb-6 text-center font-semibold">
+        <h2 className="text-3xl mb-6 text-center font-semibold text-gray-900 dark:text-white">
           SmartStock Login
         </h2>
 
