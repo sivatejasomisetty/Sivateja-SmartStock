@@ -33,9 +33,38 @@ def alerts():
 
 # -------------------- CHATBOT --------------------
 
+# @app.post("/chat")
+# def chat(message: str = Body(..., embed=True)):
+#     return {"reply": chatbot_response(message)}
+
+
+
+
+
+
+from fastapi import Request, HTTPException
+
 @app.post("/chat")
-def chat(message: str = Body(..., embed=True)):
-    return {"reply": chatbot_response(message)}
+async def chat(request: Request):
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON body")
+
+    message = (
+        body.get("message")
+        or body.get("text")
+        or body.get("msg")
+    )
+
+    if not message:
+        raise HTTPException(status_code=422, detail="Message is required")
+
+    return {
+        "reply": chatbot_response(message)
+    }
+
+
 
 
 
