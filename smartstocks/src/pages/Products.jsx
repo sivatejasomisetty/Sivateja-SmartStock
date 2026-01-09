@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useMemo } from "react";
-import axios from "axios";
+// import axios from "axios";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
@@ -7,7 +7,15 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import AddProduct from "./AddProduct";
 import EditProduct from "./EditProduct";
 
-const API_BASE = "http://localhost:8000/api/products";
+
+//For Running Locally
+// const API_BASE = "http://localhost:8000/api/products";
+
+
+//For Deployment
+
+
+
 
 export default function Products() {
   const { theme } = useContext(ThemeContext);
@@ -31,27 +39,43 @@ export default function Products() {
   ];
 
   /* ================= FETCH PRODUCTS ================= */
- const fetchProducts = async () => {
+// It works fine
+
+//  const fetchProducts = async () => {
+//   try {
+//     const token = localStorage.getItem("token");
+
+//     const res = await axios.get(
+//       "http://localhost:8000/api/products/all",
+//       {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     );
+
+//     // 🔥 THIS LINE WAS MISSING
+//     setProducts(res.data.products || []);
+
+//   } catch (err) {
+//     console.error("Failed to fetch products:", err);
+//     setProducts([]);
+//   }
+// };
+
+
+
+//Changed in time of deployment
+const fetchProducts = async () => {
   try {
-    const token = localStorage.getItem("token");
-
-    const res = await axios.get(
-      "http://localhost:8000/api/products/all",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    // 🔥 THIS LINE WAS MISSING
+    const res = await api.get("/api/products/all");
     setProducts(res.data.products || []);
-
   } catch (err) {
     console.error("Failed to fetch products:", err);
     setProducts([]);
   }
 };
+
 
   useEffect(() => {
     fetchProducts();
