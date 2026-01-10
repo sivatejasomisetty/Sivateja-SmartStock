@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import api from "../api/axios";
 
 export default function ChatbotWidget() {
   const [open, setOpen] = useState(false);
@@ -18,8 +19,8 @@ export default function ChatbotWidget() {
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/chat",
+      const res = await api.post(
+        "/chat",
         { message: input },
         { timeout: 15000 } // prevent hanging
       );

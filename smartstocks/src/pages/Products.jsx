@@ -12,7 +12,7 @@ import EditProduct from "./EditProduct";
 // const API_BASE = "http://localhost:8000/api/products";
 
 
-//For Deployment
+
 
 
 
