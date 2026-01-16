@@ -2,14 +2,14 @@ import axios from "axios";
 
 
 // //For Running Locally
-// const api = axios.create({
-//   baseURL: "http://localhost:8000",
-// });
-
-//For Deployment
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: "http://localhost:8000",
 });
+
+// //For Deployment
+// const api = axios.create({
+//   baseURL: process.env.REACT_APP_API_URL,
+// });
 
 // 🔐 Automatically attach token
 api.interceptors.request.use(
